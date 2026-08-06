@@ -1,6 +1,7 @@
 // api/pagamento.js
 // Cria uma cobrança (Checkout Pro) no Mercado Pago e devolve o link de pagamento.
-// O Access Token fica só aqui no servidor (variável de ambiente), nunca no site.
+// ATENÇÃO: token fixo aqui no código porque o repositório é público —
+// qualquer pessoa que abrir este arquivo no GitHub pode ver e usar esse token.
 // O dinheiro cai direto na conta Mercado Pago de quem gerou esse token.
 
 module.exports = async function handler(req, res) {
@@ -9,15 +10,8 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const MP_TOKEN = process.env.MP_ACCESS_TOKEN;
-  const SITE_URL = process.env.SITE_URL;
-
-  if (!MP_TOKEN || !SITE_URL) {
-    res.status(500).json({
-      error: 'Backend de pagamento não configurado. Faltam MP_ACCESS_TOKEN e/ou SITE_URL nas variáveis de ambiente.'
-    });
-    return;
-  }
+  const MP_TOKEN = "APP_USR-6442749672429898-080616-3ce442df640adbc7ac0aaebd488f995b-623537374";
+  const SITE_URL = "https://camisetas-de-time.vercel.app";
 
   try {
     const { itens, frete } = req.body;
