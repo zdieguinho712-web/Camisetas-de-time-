@@ -311,7 +311,8 @@
     font-family:'JetBrains Mono', monospace; font-size:12px;
   }
   .freight-option:hover{background:#151515;}
-  .freight-option.selected{background:var(--yellow);}
+  .freight-option.selected{background:var(--red); color:#fff;}
+  .freight-option.selected .fo-prazo{color:rgba(255,255,255,0.85);}
   .freight-option .fo-name{font-weight:700;}
   .freight-option .fo-prazo{color:var(--gray); font-size:10px;}
   .freight-note{
@@ -768,7 +769,7 @@ function selecionarFrete(idx){
   renderCart();
 }
 
-function renderFreightOptions(opcoes, cidade, uf, estimado){
+function renderFreightOptions(opcoes, cidade, uf, estimado, motivo){
   freightOptions = opcoes;
   const resultEl = document.getElementById('freightResult');
   const listHtml = opcoes.map((o,i)=>`
@@ -780,7 +781,7 @@ function renderFreightOptions(opcoes, cidade, uf, estimado){
   resultEl.innerHTML = `
     <span class="ok">Entrega em ${cidade}/${uf} — escolha a modalidade:</span>
     <div class="freight-options">${listHtml}</div>
-    ${estimado ? '<div class="freight-note">Valores estimados — backend de frete real ainda não configurado (veja README).</div>' : ''}
+    ${estimado ? `<div class="freight-note">Valores estimados — o cálculo real ainda não respondeu.${motivo ? ' Motivo: '+motivo : ''}</div>` : ''}
   `;
   resultEl.classList.add('active');
 }
@@ -800,6 +801,7 @@ async function calcularFrete(){
   freight.calculated = false;
 
   const itens = cart.map(i=>({ nome:i.name, size:i.size, qty:i.qty, price:i.price }));
+  let motivoBackend = '';
 
   // ---- Tentativa 1: backend real (/api/frete) ----
   try{
@@ -808,19 +810,21 @@ async function calcularFrete(){
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ cepDestino: raw, itens })
     });
-    if(res.ok){
-      const data = await res.json();
-      if(data.opcoes && data.opcoes.length){
-        freight.cep = cepInput.value;
-        freight.cidade = data.endereco.cidade;
-        freight.uf = data.endereco.uf;
-        renderFreightOptions(data.opcoes, data.endereco.cidade, data.endereco.uf, false);
-        btn.disabled = false; btn.textContent = 'Calcular';
-        return;
-      }
+    const data = await res.json().catch(()=>({}));
+    if(res.ok && data.opcoes && data.opcoes.length){
+      freight.cep = cepInput.value;
+      freight.cidade = data.endereco.cidade;
+      freight.uf = data.endereco.uf;
+      renderFreightOptions(data.opcoes, data.endereco.cidade, data.endereco.uf, false);
+      btn.disabled = false; btn.textContent = 'Calcular';
+      return;
     }
-    throw new Error('backend sem opções válidas');
+    motivoBackend = data.error || `HTTP ${res.status}`;
+    console.error('Backend /api/frete falhou:', motivoBackend);
+    throw new Error(motivoBackend);
   } catch(err){
+    if(!motivoBackend) motivoBackend = err.message;
+    console.error('Erro completo do frete:', err);
     // ---- Plano B: ViaCEP + tabela estimada por região ----
     try{
       const res2 = await fetch(`https://viacep.com.br/ws/${raw}/json/`);
@@ -834,7 +838,7 @@ async function calcularFrete(){
         freight.cidade = data2.localidade;
         freight.uf = data2.uf;
         const opcoesFallback = [{ transportadora:"Correios", servico:"PAC (estimado)", preco:info.price, prazo:info.prazo }];
-        renderFreightOptions(opcoesFallback, data2.localidade, data2.uf, true);
+        renderFreightOptions(opcoesFallback, data2.localidade, data2.uf, true, motivoBackend);
         selecionarFrete(0);
       }
     } catch(err2){
