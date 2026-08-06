@@ -159,9 +159,22 @@
     font-weight:700; font-size:14px;
     text-transform:uppercase; margin-bottom:4px;
   }
+  .card-price-row{display:flex; align-items:baseline; gap:6px; flex-wrap:wrap;}
+  .card-price-old{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; color:var(--gray); text-decoration:line-through;
+  }
   .card-price{
     font-family:'JetBrains Mono', monospace;
     font-size:13px; color:var(--red); font-weight:600;
+  }
+  .card-discount-tag{
+    font-family:'JetBrains Mono', monospace; font-size:9px; font-weight:700;
+    background:var(--red); color:#fff; padding:1px 5px;
+  }
+  .card-installment{
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    color:var(--gray); margin-top:2px;
   }
 
   /* MODAL - Product */
@@ -197,10 +210,33 @@
     font-family:'Anton', sans-serif;
     font-size:24px; text-transform:uppercase; margin-bottom:4px;
   }
+  .modal-price-row{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:2px;}
+  .modal-price-old{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px; color:var(--gray); text-decoration:line-through;
+  }
   .modal-price{
     font-family:'JetBrains Mono', monospace;
-    color:var(--red); font-weight:600; margin-bottom:16px;
+    color:var(--red); font-weight:700; font-size:18px;
   }
+  .modal-discount-tag{
+    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700;
+    background:var(--red); color:#fff; padding:2px 6px;
+  }
+  .modal-installment{
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+    color:var(--gray); margin-bottom:16px;
+  }
+  .trust-badges{
+    display:flex; flex-direction:column; gap:8px;
+    margin-top:16px; padding-top:16px; border-top:1px dashed var(--line);
+  }
+  .trust-badge{
+    display:flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    color:var(--gray);
+  }
+  .trust-badge svg{flex-shrink:0; width:16px; height:16px; color:var(--red);}
   .field-label{
     font-family:'JetBrains Mono', monospace;
     font-size:11px; text-transform:uppercase; letter-spacing:0.06em;
@@ -220,6 +256,13 @@
     font-family:'JetBrains Mono', monospace; font-weight:700;
     text-transform:uppercase; letter-spacing:0.04em;
     cursor:pointer; font-size:14px;
+  }
+  .buy-now-btn{
+    width:100%; padding:14px; margin-top:8px;
+    background:none; border:2px solid var(--red);
+    font-family:'JetBrains Mono', monospace; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.04em;
+    cursor:pointer; font-size:13px; color:var(--red);
   }
   .close-btn{
     position:absolute; top:14px; right:14px;
@@ -272,6 +315,24 @@
   .cart-foot{
     border-top:2px solid var(--ink); padding:18px 20px;
   }
+  .address-box{
+    display:none; padding:16px 20px; border-top:1px dashed var(--line);
+  }
+  .address-box.active{display:block;}
+  .address-label{
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--gray); margin-bottom:10px;
+  }
+  .address-row{display:flex; gap:8px; margin-bottom:8px;}
+  .address-row input{
+    flex:1; border:2px solid var(--ink); background:none; color:var(--ink);
+    padding:0 10px; height:40px;
+    font-family:'JetBrains Mono', monospace; font-size:13px;
+  }
+  .address-row input::placeholder{color:var(--gray);}
+  .address-row input.small{max-width:110px;}
+
   .freight-box{
     padding:16px 20px; border-top:1px dashed var(--line);
   }
@@ -447,6 +508,15 @@
   }
   .contato-btn.primary{background:var(--red); border-color:var(--red); color:#fff;}
 
+  .wa-float{
+    position:fixed; bottom:20px; right:20px; z-index:150;
+    width:56px; height:56px; border-radius:50%;
+    background:#25D366; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 14px rgba(0,0,0,0.4);
+    text-decoration:none;
+  }
+  .wa-float svg{width:30px; height:30px;}
+
   footer{
     border-top:2px solid var(--ink);
     padding:32px 24px; margin-top:40px;
@@ -566,6 +636,10 @@
   <div>Pedidos via WhatsApp · Pix e cartão na entrega/combinação</div>
 </footer>
 
+<a class="wa-float" href="https://wa.me/5519993758451" target="_blank" aria-label="Fale no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 0C5.495 0 .152 5.343.152 11.898c0 2.096.547 4.142 1.588 5.945L.057 24l6.304-1.653a11.86 11.86 0 0 0 5.688 1.449h.005c6.554 0 11.898-5.344 11.898-11.899C23.952 5.343 18.61 0 12.05 0zm0 21.783h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.999-3.648-.235-.374a9.86 9.86 0 0 1-1.512-5.252c0-5.448 4.435-9.883 9.889-9.883 2.64 0 5.122 1.031 6.988 2.898a9.822 9.822 0 0 1 2.893 6.994c0 5.448-4.435 9.876-9.885 9.876z"/></svg>
+</a>
+
 <!-- PRODUCT MODAL -->
 <div class="overlay" id="productOverlay">
   <div class="modal">
@@ -574,10 +648,30 @@
     <div class="modal-thumbs" id="modalThumbs"></div>
     <div class="modal-body">
       <h3 id="modalName"></h3>
+      <div class="modal-price-row">
+        <span class="modal-price-old" id="modalPriceOld"></span>
+        <span class="modal-discount-tag" id="modalDiscountTag"></span>
+      </div>
       <div class="modal-price" id="modalPrice"></div>
+      <div class="modal-installment" id="modalInstallment"></div>
       <div class="field-label">Tamanho</div>
       <div class="size-row" id="sizeRow"></div>
       <button class="add-btn" id="addBtn">Adicionar ao carrinho</button>
+      <button class="buy-now-btn" id="buyNowBtn">Comprar agora</button>
+      <div class="trust-badges">
+        <div class="trust-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-4z"/></svg>
+          Compra segura — Pix e cartão via Mercado Pago
+        </div>
+        <div class="trust-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M4 10a8 8 0 0114-4.9M20 14a8 8 0 01-14 4.9"/></svg>
+          Troca de tamanho garantida antes da produção
+        </div>
+        <div class="trust-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h13v9H3zM16 10h4l2 3v3h-6z"/><circle cx="7.5" cy="18" r="1.5"/><circle cx="17.5" cy="18" r="1.5"/></svg>
+          Frete calculado real no seu CEP
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -598,6 +692,22 @@
         <button id="freightBtn" onclick="calcularFrete()">Calcular</button>
       </div>
       <div class="freight-result" id="freightResult"></div>
+      <div class="address-box" id="addressBox">
+        <div class="address-label">Endereço de entrega</div>
+        <div class="address-row">
+          <input type="text" id="destNome" placeholder="Nome de quem recebe">
+        </div>
+        <div class="address-row">
+          <input type="text" id="destRua" placeholder="Rua / Av.">
+        </div>
+        <div class="address-row">
+          <input type="text" id="destNumero" class="small" placeholder="Número">
+          <input type="text" id="destComplemento" placeholder="Complemento (opcional)">
+        </div>
+        <div class="address-row">
+          <input type="text" id="destBairro" placeholder="Bairro">
+        </div>
+      </div>
     </div>
     <div class="cart-foot">
       <div class="cart-total"><span>SUBTOTAL</span><span id="cartSubtotal">R$ 0,00</span></div>
@@ -660,6 +770,15 @@ const products = [
 // ======= STATE =======
 let cart = []; // {id, name, price, size, qty}
 
+// ======= PREÇO: desconto + parcelamento =======
+const ORIGINAL_PRICE = 99.90; // preço "de" — ajuste se quiser outro valor de referência
+const INSTALLMENTS = 3; // parcelas sem juros
+function precoInfo(price){
+  const desconto = Math.round((1 - price / ORIGINAL_PRICE) * 100);
+  const parcela = price / INSTALLMENTS;
+  return { desconto, parcela };
+}
+
 // ======= RENDER GRID =======
 const grid = document.getElementById('productGrid');
 document.getElementById('prodCount').textContent = products.length + " modelos";
@@ -667,6 +786,7 @@ products.forEach(p=>{
   const card = document.createElement('div');
   card.className = 'card';
   card.onclick = ()=>openModal(p);
+  const info = precoInfo(p.price);
   card.innerHTML = `
     <div class="card-visual">
       <span class="card-tag">#${String(p.id).padStart(3,'0')}</span>
@@ -674,7 +794,12 @@ products.forEach(p=>{
     </div>
     <div class="card-info">
       <div class="card-name">${p.name}</div>
+      <div class="card-price-row">
+        <span class="card-price-old">R$ ${ORIGINAL_PRICE.toFixed(2).replace('.',',')}</span>
+        <span class="card-discount-tag">-${info.desconto}%</span>
+      </div>
       <div class="card-price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+      <div class="card-installment">ou ${INSTALLMENTS}x de R$ ${info.parcela.toFixed(2).replace('.',',')} sem juros</div>
     </div>`;
   grid.appendChild(card);
 });
@@ -696,6 +821,10 @@ function openModal(p){
   }
   document.getElementById('modalName').textContent = p.name;
   document.getElementById('modalPrice').textContent = "R$ " + p.price.toFixed(2).replace('.',',');
+  const info = precoInfo(p.price);
+  document.getElementById('modalPriceOld').textContent = "R$ " + ORIGINAL_PRICE.toFixed(2).replace('.',',');
+  document.getElementById('modalDiscountTag').textContent = "-" + info.desconto + "%";
+  document.getElementById('modalInstallment').textContent = `ou ${INSTALLMENTS}x de R$ ${info.parcela.toFixed(2).replace('.',',')} sem juros`;
   const sizeRow = document.getElementById('sizeRow');
   sizeRow.innerHTML = '';
   sizes.forEach(s=>{
@@ -710,6 +839,7 @@ function openModal(p){
     sizeRow.appendChild(btn);
   });
   document.getElementById('addBtn').onclick = addToCart;
+  document.getElementById('buyNowBtn').onclick = comprarAgora;
   document.getElementById('productOverlay').classList.add('active');
 }
 function closeModal(){
@@ -724,6 +854,24 @@ function addToCart(){
   renderCart();
   closeModal();
   toggleCart(true);
+}
+
+function comprarAgora(){
+  if(!currentSize){ alert('Escolhe um tamanho antes de comprar.'); return; }
+  // "Comprar agora" é uma compra rápida: substitui o carrinho por só esse item,
+  // pra ir direto pro checkout sem misturar com outras coisas que já estavam lá.
+  cart = [{id:currentProduct.id, name:currentProduct.name, price:currentProduct.price, size:currentSize, qty:1}];
+  freight.calculated = false;
+  document.getElementById('addressBox').classList.remove('active');
+  renderCart();
+  closeModal();
+  toggleCart(true);
+  // já deixa o campo de CEP pronto pra digitar, pulando a etapa de "continuar comprando"
+  setTimeout(()=>{
+    const cepEl = document.getElementById('cepInput');
+    cepEl.focus();
+    cepEl.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 200);
 }
 
 // ======= FRETE =======
@@ -766,6 +914,7 @@ function selecionarFrete(idx){
   freight.servico = opt.transportadora + ' ' + opt.servico;
   freight.prazo = opt.prazo;
   document.querySelectorAll('.freight-option').forEach((el,i)=>el.classList.toggle('selected', i===idx));
+  document.getElementById('addressBox').classList.add('active');
   renderCart();
 }
 
@@ -815,6 +964,7 @@ async function calcularFrete(){
       freight.cep = cepInput.value;
       freight.cidade = data.endereco.cidade;
       freight.uf = data.endereco.uf;
+      preencherEndereco(data.endereco.rua, data.endereco.bairro);
       renderFreightOptions(data.opcoes, data.endereco.cidade, data.endereco.uf, false);
       btn.disabled = false; btn.textContent = 'Calcular';
       return;
@@ -837,6 +987,7 @@ async function calcularFrete(){
         freight.cep = cepInput.value;
         freight.cidade = data2.localidade;
         freight.uf = data2.uf;
+        preencherEndereco(data2.logradouro, data2.bairro);
         const opcoesFallback = [{ transportadora:"Correios", servico:"PAC (estimado)", preco:info.price, prazo:info.prazo }];
         renderFreightOptions(opcoesFallback, data2.localidade, data2.uf, true, motivoBackend);
         selecionarFrete(0);
@@ -971,9 +1122,37 @@ function gerarPixPayload({chave, nome, cidade, valor, txid}){
   return payload + pixCRC16(payload);
 }
 
+function preencherEndereco(rua, bairro){
+  if(rua && !document.getElementById('destRua').value) document.getElementById('destRua').value = rua;
+  if(bairro && !document.getElementById('destBairro').value) document.getElementById('destBairro').value = bairro;
+}
+
+function getEndereco(){
+  return {
+    nome: document.getElementById('destNome').value.trim(),
+    rua: document.getElementById('destRua').value.trim(),
+    numero: document.getElementById('destNumero').value.trim(),
+    complemento: document.getElementById('destComplemento').value.trim(),
+    bairro: document.getElementById('destBairro').value.trim()
+  };
+}
+
+function enderecoValido(){
+  const e = getEndereco();
+  return e.nome && e.rua && e.numero;
+}
+
+function formatarEndereco(e){
+  let linha = `${e.rua}, ${e.numero}`;
+  if(e.complemento) linha += ` — ${e.complemento}`;
+  if(e.bairro) linha += ` — ${e.bairro}`;
+  return linha;
+}
+
 function gerarCobrancaPix(){
   if(cart.length===0){ alert('Seu carrinho está vazio.'); return; }
   if(!freight.calculated){ alert('Calcula o frete com seu CEP antes de pagar.'); return; }
+  if(!enderecoValido()){ alert('Preenche o endereço de entrega (nome, rua e número) antes de pagar.'); return; }
   const subtotal = cart.reduce((a,i)=>a+i.price*i.qty,0);
   const total = subtotal + freight.value;
   const txid = 'PED' + Date.now().toString().slice(-10);
@@ -986,7 +1165,8 @@ function gerarCobrancaPix(){
     <div class="pix-copy-label">Pix Copia e Cola</div>
     <textarea class="pix-payload" id="pixPayload" readonly>${payload}</textarea>
     <button type="button" class="pix-copy-btn" id="pixCopyBtn" onclick="copiarPix()">Copiar código</button>
-    <div class="pix-hint">Escaneie o QR Code no app do seu banco ou copie o código acima e cole na opção "Pix Copia e Cola". Depois de pagar, é só aguardar a confirmação do envio.</div>
+    <div class="pix-hint">Escaneie o QR Code no app do seu banco ou copie o código acima e cole na opção "Pix Copia e Cola".</div>
+    <button type="button" class="cartao-btn" style="background:#25D366; margin-top:10px;" onclick="checkoutWhatsapp()">Já paguei — enviar confirmação no WhatsApp</button>
   `;
   box.classList.add('active');
 }
@@ -1008,6 +1188,7 @@ async function copiarPix(){
 async function gerarPagamentoCartao(){
   if(cart.length===0){ alert('Seu carrinho está vazio.'); return; }
   if(!freight.calculated){ alert('Calcula o frete com seu CEP antes de pagar.'); return; }
+  if(!enderecoValido()){ alert('Preenche o endereço de entrega (nome, rua e número) antes de pagar.'); return; }
   const btn = document.getElementById('cartaoBtn');
   btn.disabled = true;
   btn.textContent = 'Preparando pagamento...';
@@ -1046,6 +1227,12 @@ function checkoutWhatsapp(){
   msg += `\nSubtotal: R$ ${subtotal.toFixed(2).replace('.',',')}`;
   msg += `\nFrete (CEP ${freight.cep}, ${freight.cidade}/${freight.uf}): ${freight.value===0?'GRÁTIS':'R$ '+freight.value.toFixed(2).replace('.',',')} — ${freight.prazo}`;
   msg += `\nTOTAL: R$ ${total.toFixed(2).replace('.',',')}`;
+  if(enderecoValido()){
+    const e = getEndereco();
+    msg += `\n\nEntregar para: ${e.nome}`;
+    msg += `\n${formatarEndereco(e)}`;
+    msg += `\n${freight.cidade}/${freight.uf} — CEP ${freight.cep}`;
+  }
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 }
