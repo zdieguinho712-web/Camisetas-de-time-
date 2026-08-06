@@ -636,6 +636,12 @@
   <div>Pedidos via WhatsApp · Pix e cartão na entrega/combinação</div>
 </footer>
 
+<div class="cart-overlay" id="paymentReturnOverlay">
+  <div class="cart-drawer" style="max-width:380px; height:auto; max-height:85vh; margin:auto; border-left:none; border:3px solid var(--ink); text-align:center; padding:32px 24px;">
+    <div id="paymentReturnContent"></div>
+  </div>
+</div>
+
 <a class="wa-float" href="https://wa.me/5519993758451" target="_blank" aria-label="Fale no WhatsApp">
   <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 0C5.495 0 .152 5.343.152 11.898c0 2.096.547 4.142 1.588 5.945L.057 24l6.304-1.653a11.86 11.86 0 0 0 5.688 1.449h.005c6.554 0 11.898-5.344 11.898-11.899C23.952 5.343 18.61 0 12.05 0zm0 21.783h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.999-3.648-.235-.374a9.86 9.86 0 0 1-1.512-5.252c0-5.448 4.435-9.883 9.889-9.883 2.64 0 5.122 1.031 6.988 2.898a9.822 9.822 0 0 1 2.893 6.994c0 5.448-4.435 9.876-9.885 9.876z"/></svg>
 </a>
@@ -1189,8 +1195,6 @@ async function gerarPagamentoCartao(){
   if(cart.length===0){ alert('Seu carrinho está vazio.'); return; }
   if(!freight.calculated){ alert('Calcula o frete com seu CEP antes de pagar.'); return; }
   if(!enderecoValido()){ alert('Preenche o endereço de entrega (nome, rua e número) antes de pagar.'); return; }
-  // abre a aba do WhatsApp já aqui (gesto do clique), antes do await — evita bloqueio de pop-up
-  const waWindow = window.open('', '_blank');
   const btn = document.getElementById('cartaoBtn');
   btn.disabled = true;
   btn.textContent = 'Preparando pagamento...';
@@ -1205,18 +1209,17 @@ async function gerarPagamentoCartao(){
     });
     const data = await res.json();
     if(!res.ok || !data.init_point){
-      if(waWindow) waWindow.close();
       alert('Pagamento por cartão ainda não está disponível. Tenta pelo Pix ou fala no WhatsApp.');
       btn.disabled = false; btn.textContent = 'Pagar com Cartão';
       return;
     }
-    // manda os dados do pedido (endereço incluso) pro WhatsApp do Victor Hugo
-    const msg = montarMensagemPedido('Cartão de crédito (Mercado Pago)');
-    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-    if(waWindow) waWindow.location.href = waUrl; else window.open(waUrl, '_blank');
+    // Guarda o pedido pra recuperar quando o cliente voltar do Mercado Pago —
+    // só manda a confirmação de verdade se o pagamento realmente for aprovado.
+    localStorage.setItem('pedidoPendente', JSON.stringify({
+      cart, freight, endereco: getEndereco(), salvoEm: Date.now()
+    }));
     window.location.href = data.init_point;
   } catch(err){
-    if(waWindow) waWindow.close();
     alert('Não consegui iniciar o pagamento agora. Tenta pelo Pix ou fala no WhatsApp.');
     btn.disabled = false; btn.textContent = 'Pagar com Cartão';
   }
@@ -1251,8 +1254,83 @@ function checkoutWhatsapp(formaPagamento){
   window.open(url, '_blank');
 }
 
+// ======= CONFIRMAÇÃO REAL DE PAGAMENTO (ao voltar do Mercado Pago) =======
+function montarMensagemDoPedidoSalvo(pedido, formaPagamento){
+  let msg = "Olá! Pedido confirmado (pagamento aprovado):\n\n";
+  pedido.cart.forEach(item=>{
+    msg += `• ${item.name} — Tam ${item.size} — Qtd ${item.qty} — R$ ${(item.price*item.qty).toFixed(2).replace('.',',')}\n`;
+  });
+  const subtotal = pedido.cart.reduce((a,i)=>a+i.price*i.qty,0);
+  const total = subtotal + pedido.freight.value;
+  msg += `\nSubtotal: R$ ${subtotal.toFixed(2).replace('.',',')}`;
+  msg += `\nFrete (CEP ${pedido.freight.cep}, ${pedido.freight.cidade}/${pedido.freight.uf}): ${pedido.freight.value===0?'GRÁTIS':'R$ '+pedido.freight.value.toFixed(2).replace('.',',')} — ${pedido.freight.prazo}`;
+  msg += `\nTOTAL: R$ ${total.toFixed(2).replace('.',',')}`;
+  msg += `\nPagamento: ${formaPagamento}`;
+  const e = pedido.endereco;
+  msg += `\n\nEntregar para: ${e.nome}`;
+  msg += `\n${e.rua}, ${e.numero}${e.complemento ? ' — '+e.complemento : ''}${e.bairro ? ' — '+e.bairro : ''}`;
+  msg += `\n${pedido.freight.cidade}/${pedido.freight.uf} — CEP ${pedido.freight.cep}`;
+  return msg;
+}
+
+function confirmarPedidoAposPagamento(){
+  const raw = localStorage.getItem('pedidoPendente');
+  if(!raw) return;
+  const pedido = JSON.parse(raw);
+  const msg = montarMensagemDoPedidoSalvo(pedido, 'Cartão de crédito (Mercado Pago) — PAGAMENTO APROVADO ✅');
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+  localStorage.removeItem('pedidoPendente');
+  document.getElementById('paymentReturnOverlay').classList.remove('active');
+}
+
+function verificarRetornoPagamento(){
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('pagamento');
+  if(!status) return;
+  window.history.replaceState({}, '', window.location.pathname); // limpa a URL
+
+  const raw = localStorage.getItem('pedidoPendente');
+  const overlay = document.getElementById('paymentReturnOverlay');
+  const content = document.getElementById('paymentReturnContent');
+  const waLink = `https://wa.me/${WHATSAPP_NUMBER}`;
+
+  if(status === 'sucesso' && raw){
+    content.innerHTML = `
+      <div style="font-size:40px; margin-bottom:10px;">✅</div>
+      <h3 style="font-family:'Anton',sans-serif; font-size:24px; margin-bottom:10px;">Pagamento aprovado!</h3>
+      <p style="color:var(--gray); font-size:13px; margin-bottom:20px;">Toque no botão abaixo pra confirmar seu pedido — isso avisa a loja pra começar a produzir e enviar.</p>
+      <button class="pix-btn" onclick="confirmarPedidoAposPagamento()">Confirmar pedido no WhatsApp</button>
+    `;
+  } else if(status === 'sucesso'){
+    content.innerHTML = `
+      <div style="font-size:40px; margin-bottom:10px;">✅</div>
+      <h3 style="font-family:'Anton',sans-serif; font-size:24px; margin-bottom:10px;">Pagamento aprovado!</h3>
+      <p style="color:var(--gray); font-size:13px; margin-bottom:20px;">Não encontrei os detalhes do pedido neste dispositivo. Fala com a loja pelo WhatsApp pra confirmar o envio.</p>
+      <a class="pix-btn" style="display:block; text-decoration:none; box-sizing:border-box;" href="${waLink}" target="_blank">Falar no WhatsApp</a>
+    `;
+  } else if(status === 'pendente'){
+    content.innerHTML = `
+      <div style="font-size:40px; margin-bottom:10px;">⏳</div>
+      <h3 style="font-family:'Anton',sans-serif; font-size:24px; margin-bottom:10px;">Pagamento em análise</h3>
+      <p style="color:var(--gray); font-size:13px; margin-bottom:20px;">Assim que for aprovado, fala com a loja pelo WhatsApp pra confirmar o envio.</p>
+      <a class="pix-btn" style="display:block; text-decoration:none; box-sizing:border-box;" href="${waLink}" target="_blank">Falar no WhatsApp</a>
+    `;
+  } else {
+    content.innerHTML = `
+      <div style="font-size:40px; margin-bottom:10px;">❌</div>
+      <h3 style="font-family:'Anton',sans-serif; font-size:24px; margin-bottom:10px;">Pagamento não aprovado</h3>
+      <p style="color:var(--gray); font-size:13px;">Pode tentar de novo ou usar o Pix. Se preferir, fala com a loja pelo WhatsApp.</p>
+    `;
+    localStorage.removeItem('pedidoPendente');
+  }
+  overlay.classList.add('active');
+}
+
 renderCart();
+verificarRetornoPagamento();
 </script>
+
 
 </body>
 </html>
