@@ -1166,7 +1166,7 @@ function gerarCobrancaPix(){
     <textarea class="pix-payload" id="pixPayload" readonly>${payload}</textarea>
     <button type="button" class="pix-copy-btn" id="pixCopyBtn" onclick="copiarPix()">Copiar código</button>
     <div class="pix-hint">Escaneie o QR Code no app do seu banco ou copie o código acima e cole na opção "Pix Copia e Cola".</div>
-    <button type="button" class="cartao-btn" style="background:#25D366; margin-top:10px;" onclick="checkoutWhatsapp()">Já paguei — enviar confirmação no WhatsApp</button>
+    <button type="button" class="cartao-btn" style="background:#25D366; margin-top:10px;" onclick="checkoutWhatsapp('Pix')">Já paguei — enviar confirmação no WhatsApp</button>
   `;
   box.classList.add('active');
 }
@@ -1189,6 +1189,8 @@ async function gerarPagamentoCartao(){
   if(cart.length===0){ alert('Seu carrinho está vazio.'); return; }
   if(!freight.calculated){ alert('Calcula o frete com seu CEP antes de pagar.'); return; }
   if(!enderecoValido()){ alert('Preenche o endereço de entrega (nome, rua e número) antes de pagar.'); return; }
+  // abre a aba do WhatsApp já aqui (gesto do clique), antes do await — evita bloqueio de pop-up
+  const waWindow = window.open('', '_blank');
   const btn = document.getElementById('cartaoBtn');
   btn.disabled = true;
   btn.textContent = 'Preparando pagamento...';
@@ -1203,21 +1205,25 @@ async function gerarPagamentoCartao(){
     });
     const data = await res.json();
     if(!res.ok || !data.init_point){
+      if(waWindow) waWindow.close();
       alert('Pagamento por cartão ainda não está disponível. Tenta pelo Pix ou fala no WhatsApp.');
       btn.disabled = false; btn.textContent = 'Pagar com Cartão';
       return;
     }
+    // manda os dados do pedido (endereço incluso) pro WhatsApp do Victor Hugo
+    const msg = montarMensagemPedido('Cartão de crédito (Mercado Pago)');
+    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    if(waWindow) waWindow.location.href = waUrl; else window.open(waUrl, '_blank');
     window.location.href = data.init_point;
   } catch(err){
+    if(waWindow) waWindow.close();
     alert('Não consegui iniciar o pagamento agora. Tenta pelo Pix ou fala no WhatsApp.');
     btn.disabled = false; btn.textContent = 'Pagar com Cartão';
   }
 }
 
 // ======= WHATSAPP (agora é só o "plano B" — dúvidas ou combinar direto) =======
-function checkoutWhatsapp(){
-  if(cart.length===0){ alert('Seu carrinho está vazio.'); return; }
-  if(!freight.calculated){ alert('Calcula o frete com seu CEP antes de finalizar.'); return; }
+function montarMensagemPedido(formaPagamento){
   let msg = "Olá! Quero fazer um pedido:\n\n";
   cart.forEach(item=>{
     msg += `• ${item.name} — Tam ${item.size} — Qtd ${item.qty} — R$ ${(item.price*item.qty).toFixed(2).replace('.',',')}\n`;
@@ -1227,12 +1233,20 @@ function checkoutWhatsapp(){
   msg += `\nSubtotal: R$ ${subtotal.toFixed(2).replace('.',',')}`;
   msg += `\nFrete (CEP ${freight.cep}, ${freight.cidade}/${freight.uf}): ${freight.value===0?'GRÁTIS':'R$ '+freight.value.toFixed(2).replace('.',',')} — ${freight.prazo}`;
   msg += `\nTOTAL: R$ ${total.toFixed(2).replace('.',',')}`;
+  if(formaPagamento) msg += `\nPagamento: ${formaPagamento}`;
   if(enderecoValido()){
     const e = getEndereco();
     msg += `\n\nEntregar para: ${e.nome}`;
     msg += `\n${formatarEndereco(e)}`;
     msg += `\n${freight.cidade}/${freight.uf} — CEP ${freight.cep}`;
   }
+  return msg;
+}
+
+function checkoutWhatsapp(formaPagamento){
+  if(cart.length===0){ alert('Seu carrinho está vazio.'); return; }
+  if(!freight.calculated){ alert('Calcula o frete com seu CEP antes de finalizar.'); return; }
+  const msg = montarMensagemPedido(formaPagamento);
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 }
