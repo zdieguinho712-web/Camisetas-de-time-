@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ESTAMPA — Camisetas</title>
+<title>DOGRAU VITINHO — Camisetas</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
   :root{
-    --ink:#15161F;
-    --paper:#FAFAF7;
-    --yellow:#F5C518;
-    --red:#E8491D;
-    --gray:#6B6B76;
-    --line: rgba(21,22,31,0.12);
+    --ink:#FFFFFF;
+    --paper:#0A0A0A;
+    --yellow:#E5231B;
+    --red:#E5231B;
+    --gray:#9A9A9A;
+    --line: rgba(255,255,255,0.14);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -38,14 +38,15 @@
   }
   .logo{
     font-family:'Anton', sans-serif;
-    font-size:26px;
-    letter-spacing:0.02em;
+    font-size:clamp(15px, 4.8vw, 26px);
+    letter-spacing:0.01em;
     text-transform:uppercase;
+    white-space:nowrap;
   }
   .logo span{color:var(--red);}
   .cart-btn{
     display:flex; align-items:center; gap:8px;
-    background:var(--ink); color:var(--paper);
+    background:var(--red); color:#fff;
     border:none; padding:10px 16px;
     font-family:'JetBrains Mono', monospace;
     font-weight:600; font-size:13px;
@@ -53,7 +54,7 @@
     text-transform:uppercase; letter-spacing:0.04em;
   }
   .cart-count{
-    background:var(--yellow); color:var(--ink);
+    background:var(--paper); color:var(--red);
     border-radius:50%; width:20px; height:20px;
     display:flex; align-items:center; justify-content:center;
     font-size:11px; font-weight:700;
@@ -82,9 +83,7 @@
     max-width:820px;
   }
   h1 .hl{
-    color:var(--paper);
-    background:var(--ink);
-    padding:0 10px;
+    color:var(--red);
     display:inline-block;
   }
   .hero p{
@@ -137,7 +136,7 @@
     cursor:pointer;
     transition:background 0.15s ease;
   }
-  .card:hover{background:#F0EEE7;}
+  .card:hover{background:#151515;}
   .card-visual{
     aspect-ratio:1/1;
     display:flex; align-items:center; justify-content:center;
@@ -149,7 +148,7 @@
   .card-tag{
     position:absolute; top:8px; left:8px;
     font-family:'JetBrains Mono', monospace;
-    font-size:10px; background:var(--ink); color:var(--paper);
+    font-size:10px; background:#101014; color:#fff;
     padding:2px 6px;
   }
   .card-info{
@@ -286,9 +285,10 @@
     flex:1; border:2px solid var(--ink); background:none;
     padding:0 12px; height:42px;
     font-family:'JetBrains Mono', monospace; font-size:14px;
-    letter-spacing:0.02em;
+    letter-spacing:0.02em; color:var(--ink);
   }
-  .freight-row input:focus{outline:none; background:#F0EEE7;}
+  .freight-row input::placeholder{color:var(--gray);}
+  .freight-row input:focus{outline:none; background:#151515;}
   .freight-row button{
     border:2px solid var(--ink); background:var(--ink); color:var(--paper);
     padding:0 16px; font-family:'JetBrains Mono', monospace;
@@ -301,7 +301,7 @@
     display:none;
   }
   .freight-result.active{display:block;}
-  .freight-result .ok{color:#2E6E5E;}
+  .freight-result .ok{color:#4ADE80;}
   .freight-result .err{color:var(--red);}
   .freight-options{margin-top:8px; display:flex; flex-direction:column; gap:6px;}
   .freight-option{
@@ -310,7 +310,7 @@
     cursor:pointer; background:none; text-align:left;
     font-family:'JetBrains Mono', monospace; font-size:12px;
   }
-  .freight-option:hover{background:#F0EEE7;}
+  .freight-option:hover{background:#151515;}
   .freight-option.selected{background:var(--yellow);}
   .freight-option .fo-name{font-weight:700;}
   .freight-option .fo-prazo{color:var(--gray); font-size:10px;}
@@ -351,7 +351,7 @@
     font-family:'JetBrains Mono', monospace; font-weight:700;
     font-size:14px; margin-bottom:10px;
   }
-  .pix-qr{width:180px; height:180px; margin:0 auto 12px; border:2px solid var(--ink);}
+  .pix-qr{width:180px; height:180px; margin:0 auto 12px; border:2px solid var(--red);}
   .pix-copy-label{
     font-family:'JetBrains Mono', monospace; font-size:10px;
     text-transform:uppercase; color:var(--gray); margin-bottom:6px;
@@ -360,7 +360,7 @@
     width:100%; height:56px; resize:none;
     border:2px solid var(--ink); padding:8px;
     font-family:'JetBrains Mono', monospace; font-size:10px;
-    margin-bottom:8px; background:#F0EEE7;
+    margin-bottom:8px; background:#EFEDE6; color:#101014;
   }
   .pix-copy-btn{
     width:100%; padding:10px; border:2px solid var(--ink);
@@ -380,6 +380,72 @@
     cursor:pointer; padding:4px;
   }
 
+  /* NAV MENU */
+  .menu-btn{
+    background:none; border:none; cursor:pointer;
+    display:flex; flex-direction:column; gap:5px; padding:6px;
+  }
+  .menu-btn span{width:22px; height:2px; background:var(--ink); display:block;}
+  .nav-overlay{
+    position:fixed; inset:0; background:var(--paper);
+    display:none; flex-direction:column;
+    z-index:200; overflow-y:auto;
+  }
+  .nav-overlay.active{display:flex;}
+  .nav-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 24px; border-bottom:2px solid var(--ink);
+  }
+  .nav-links{padding:24px; display:flex; flex-direction:column;}
+  .nav-links a{
+    font-family:'Anton', sans-serif; font-size:40px;
+    text-transform:uppercase; color:var(--ink); text-decoration:none;
+    padding:18px 0; border-bottom:1px solid var(--line);
+  }
+  .nav-links a:active{color:var(--red);}
+
+  /* CONTENT SECTIONS */
+  .content-section{padding:56px 0; border-top:2px solid var(--ink);}
+  .content-section .eyebrow-label{
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+    letter-spacing:0.12em; text-transform:uppercase; color:var(--red);
+    margin-bottom:10px; display:block;
+  }
+  .content-section h2{
+    font-family:'Anton', sans-serif; font-size:clamp(30px,7vw,48px);
+    text-transform:uppercase; margin-bottom:20px; line-height:0.98;
+  }
+  .content-section p{color:var(--gray); line-height:1.6; max-width:640px; margin-bottom:14px;}
+
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-item summary{
+    padding:18px 0; cursor:pointer; list-style:none;
+    font-weight:700; font-size:15px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{content:'+'; font-size:22px; color:var(--red); font-weight:400;}
+  .faq-item[open] summary::after{content:'–';}
+  .faq-item p{padding-bottom:18px; color:var(--gray); font-size:14px; max-width:100%;}
+
+  .size-table{width:100%; border-collapse:collapse; margin-top:8px;}
+  .size-table th, .size-table td{
+    border:1px solid var(--line); padding:10px 12px;
+    text-align:left; font-family:'JetBrains Mono', monospace; font-size:12px;
+  }
+  .size-table th{color:var(--red); text-transform:uppercase; letter-spacing:0.04em;}
+  .size-note{font-size:12px; color:var(--gray); margin-top:10px; font-style:italic;}
+
+  .contato-actions{display:flex; flex-direction:column; gap:10px; max-width:340px; margin-top:20px;}
+  .contato-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px; border:2px solid var(--ink);
+    font-family:'JetBrains Mono', monospace; font-weight:700;
+    text-transform:uppercase; font-size:13px; letter-spacing:0.03em;
+    color:var(--ink); text-decoration:none;
+  }
+  .contato-btn.primary{background:var(--red); border-color:var(--red); color:#fff;}
+
   footer{
     border-top:2px solid var(--ink);
     padding:32px 24px; margin-top:40px;
@@ -393,12 +459,29 @@
 
 <header>
   <div class="header-inner">
-    <div class="logo">ESTA<span>MPA</span></div>
+    <button class="menu-btn" onclick="toggleNav(true)" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="logo">DOGRAU <span>VITINHO</span></div>
     <button class="cart-btn" onclick="toggleCart(true)">
       CARRINHO <span class="cart-count" id="cartCount">0</span>
     </button>
   </div>
 </header>
+
+<div class="nav-overlay" id="navOverlay">
+  <div class="nav-head">
+    <div class="logo">DOGRAU <span>VITINHO</span></div>
+    <button class="close-btn" style="position:static;" onclick="toggleNav(false)">✕</button>
+  </div>
+  <nav class="nav-links">
+    <a href="#catalogo" onclick="toggleNav(false)">Catálogo</a>
+    <a href="#sobre" onclick="toggleNav(false)">Sobre</a>
+    <a href="#faq" onclick="toggleNav(false)">FAQ</a>
+    <a href="#tamanhos" onclick="toggleNav(false)">Guia de tamanhos</a>
+    <a href="#contato" onclick="toggleNav(false)">Contato</a>
+  </nav>
+</div>
 
 <section class="hero">
   <div class="hero-inner">
@@ -409,7 +492,7 @@
   </div>
 </section>
 
-<div class="wrap">
+<div class="wrap" id="catalogo">
   <div class="section-label">
     <h2>Catálogo</h2>
     <span class="count" id="prodCount">0 modelos</span>
@@ -417,8 +500,68 @@
   <div class="grid" id="productGrid"></div>
 </div>
 
+<section class="content-section" id="sobre">
+  <div class="wrap">
+    <span class="eyebrow-label">Origem</span>
+    <h2>Feito no grau,<br>vestido na rua</h2>
+    <p>A Dograu Vitinho nasceu da cultura do grau — moto, adrenalina e atitude. Cada estampa carrega essa história: peças autênticas, numeradas por lote, pensadas pra quem vive esse universo de verdade.</p>
+    <p>Trabalhamos com tecido 100% algodão e estampa em serigrafia, feita sob encomenda — sem estoque parado, sem peça igual à do outro.</p>
+  </div>
+</section>
+
+<section class="content-section" id="faq">
+  <div class="wrap">
+    <span class="eyebrow-label">Dúvidas</span>
+    <h2>Perguntas frequentes</h2>
+    <details class="faq-item">
+      <summary>Quanto tempo leva pra ficar pronta?</summary>
+      <p>Como cada camiseta é feita sob encomenda, o prazo de produção é combinado direto pelo WhatsApp na hora do pedido. Depois de pronta, o prazo de entrega aparece na hora de calcular o frete.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Quais formas de pagamento vocês aceitam?</summary>
+      <p>Pix (na hora, com QR Code direto no site) e cartão de crédito. Se preferir, também dá pra combinar tudo direto pelo WhatsApp.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Posso trocar o tamanho depois de comprar?</summary>
+      <p>Dá sim, é só chamar no WhatsApp antes de a peça ser enviada pra produção. Depois de impressa, a troca de tamanho não é mais possível.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Vocês fazem estampa personalizada?</summary>
+      <p>Fazemos! Manda sua ideia no WhatsApp que a gente vê se rola encaixar no próximo lote.</p>
+    </details>
+  </div>
+</section>
+
+<section class="content-section" id="tamanhos">
+  <div class="wrap">
+    <span class="eyebrow-label">Guia de tamanhos</span>
+    <h2>Ache o seu caimento</h2>
+    <p>Medidas aproximadas, tiradas com a peça em superfície plana. Em caso de dúvida entre dois tamanhos, chama no WhatsApp que a gente ajuda.</p>
+    <table class="size-table">
+      <tr><th>Tamanho</th><th>Largura peito (cm)</th><th>Comprimento (cm)</th></tr>
+      <tr><td>P</td><td>48</td><td>68</td></tr>
+      <tr><td>M</td><td>51</td><td>70</td></tr>
+      <tr><td>G</td><td>54</td><td>72</td></tr>
+      <tr><td>GG</td><td>57</td><td>74</td></tr>
+    </table>
+    <div class="size-note">Largura do peito = medida de axila a axila, peça esticada em linha reta.</div>
+  </div>
+</section>
+
+<section class="content-section" id="contato">
+  <div class="wrap">
+    <span class="eyebrow-label">Contato</span>
+    <h2>Fala com a gente</h2>
+    <p>Dúvidas sobre pedido, prazo ou estampa personalizada — chama a qualquer hora.</p>
+    <div class="contato-actions">
+      <a class="contato-btn primary" href="https://wa.me/5519993758451" target="_blank">WhatsApp</a>
+      <a class="contato-btn" href="https://www.instagram.com/dograu.vitinhooo/" target="_blank">@dograu.vitinhooo</a>
+    </div>
+  </div>
+</section>
+
 <footer>
-  <div>ESTAMPA © 2026 — feito sob encomenda</div>
+  <div>DOGRAU VITINHO © 2026 — feito sob encomenda</div>
   <div>Pedidos via WhatsApp · Pix e cartão na entrega/combinação</div>
 </footer>
 
@@ -715,10 +858,9 @@ function renderManualUFFallback(){
   const options = Object.keys(freightTableFallback)
     .map(uf => `<option value="${uf}">${nomesUF[uf] || uf} (${uf})</option>`).join('');
   resultEl.innerHTML = `
-    <span class="err">Não consegui identificar seu endereço automaticamente.</span>
-    <div class="freight-note">Isso pode acontecer dependendo de onde o site está sendo aberto — sem problema, selecione seu estado abaixo pra ver o frete estimado:</div>
+    <span class="ok">Digite ou selecione seu estado pra ver o frete:</span>
     <div class="freight-row" style="margin-top:8px;">
-      <select id="ufManualSelect" style="flex:1; border:2px solid var(--ink); height:42px; font-family:'JetBrains Mono',monospace; background:none;">
+      <select id="ufManualSelect" style="flex:1; border:2px solid var(--ink); height:42px; font-family:'JetBrains Mono',monospace; background:none; color:var(--ink);">
         <option value="">Selecione o estado</option>
         ${options}
       </select>
@@ -742,6 +884,10 @@ function usarUFManual(){
 }
 
 // ======= CART =======
+function toggleNav(open){
+  document.getElementById('navOverlay').classList.toggle('active', open);
+}
+
 function toggleCart(open){
   document.getElementById('cartOverlay').classList.toggle('active', open);
 }
